@@ -2,10 +2,10 @@
 # Spring 2023
 # Homework 3
 
-# YOUR NAME HERE
+# Tianhua Song
 
-# YOUR CANVAS NAME HERE
-# YOUR GITHUB USER NAME HERE
+# tianhuas
+# SkySong4
 
 # Due date: Sunday April 16th before midnight
 # Write your answers in the space between the questions, and commit/push only
@@ -37,6 +37,23 @@
 # NOTE: Your final submission should have only TWO classes: one (modified)
 #       MovieDataBase, and the new InteractiveMovieDataBase
 
+#from numpy import random
+
+#class MovieDataBase():
+#    def __init__(self):
+#        self.titles = []
+#        self.movies = {}
+
+#    def add_movie(self, title, year, category, rating, num_stars):
+#        self.titles.append(title)
+#        self.movies[title] = {'year':year, 'category':category, 'rating':rating, 'stars':num_stars}
+#        print(f'{title} ({year}) added to the database.')
+
+#    def what_to_watch(self):
+#        choice = random.choice(self.titles)
+#        movie = self.movies[choice]
+#        print(f"Your movie today is {choice} ({movie['year']}), which is a {movie['rating']}-rated {movie['category']}, and was given {movie['stars']} stars.")
+
 from numpy import random
 
 class MovieDataBase():
@@ -46,10 +63,52 @@ class MovieDataBase():
 
     def add_movie(self, title, year, category, rating, num_stars):
         self.titles.append(title)
-        self.movies[title] = {'year':year, 'category':category, 'rating':rating, 'stars':num_stars}
+        self.movies[title] = {'year': year, 'category': category, 'rating': rating, 'stars': num_stars}
         print(f'{title} ({year}) added to the database.')
 
-    def what_to_watch(self):
-        choice = random.choice(self.titles)
+    def what_to_watch(self, category=None):
+        if not self.titles:
+            try:
+                raise ValueError("No movies in the database.")
+            except ValueError as e:
+                print("Error:", e)
+                return
+
+        if category:
+            titles_by_category = [title for title in self.titles if self.movies[title]['category'] == category]
+            if not titles_by_category:
+                print(f"No movies found in the '{category}' category.")
+                return
+            choice = random.choice(titles_by_category)
+        else:
+            choice = random.choice(self.titles)
+
         movie = self.movies[choice]
         print(f"Your movie today is {choice} ({movie['year']}), which is a {movie['rating']}-rated {movie['category']}, and was given {movie['stars']} stars.")
+
+
+class InteractiveMovieDataBase(MovieDataBase):
+    def add_movie(self, title=None, year=None, category=None, rating=None, num_stars=None):
+        if not title or not year or not category or not rating or not num_stars:
+            title = input("Enter movie title: ")
+            year = input("Enter movie year: ")
+            category = input("Enter movie category: ")
+            rating = input("Enter movie rating: ")
+            num_stars = input("Enter number of stars: ")
+
+            # Check for errors in user input
+            if not title or not year.isdigit() or not category or not rating or not num_stars.isdigit():
+                print("Error: Invalid input. Please try again.")
+                return
+
+            year = int(year)
+            num_stars = int(num_stars)
+
+        super().add_movie(title, year, category, rating, num_stars)
+
+    def movie_rankings(self):
+        ranked_titles = sorted(self.titles, key=lambda title: self.movies[title]['stars'], reverse=True)
+        return ranked_titles
+
+
+
