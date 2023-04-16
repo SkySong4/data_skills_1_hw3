@@ -89,20 +89,36 @@ class MovieDataBase():
 
 class InteractiveMovieDataBase(MovieDataBase):
     def add_movie(self, title=None, year=None, category=None, rating=None, num_stars=None):
-        if not title or not year or not category or not rating or not num_stars:
+        if title is None or year is None or category is None or rating is None or num_stars is None:
             title = input("Enter movie title: ")
             year = input("Enter movie year: ")
             category = input("Enter movie category: ")
             rating = input("Enter movie rating: ")
             num_stars = input("Enter number of stars: ")
 
-            # Check for errors in user input
-            if not title or not year.isdigit() or not category or not rating or not num_stars.isdigit():
-                print("Error: Invalid input. Please try again.")
+            # Check if the inputs are valid
+           if not title or not title.strip():
+                print("Error: Invalid title. Title should not be empty or None.")
                 return
 
-            year = int(year)
-            num_stars = int(num_stars)
+            if not category or not category.strip():
+                print("Error: Invalid category. Category should not be empty or None.")
+                return
+
+            if not rating or not rating.strip():
+                print("Error: Invalid rating. Rating should not be empty or None.")
+                return
+            
+             try:
+                year = int(year)
+                num_stars = float(num_stars)
+            except ValueError:
+                print("Error: Invalid input. Year should be an integer and stars should be a number.")
+                return
+
+            if not (1 <= num_stars <= 5):
+                print("Error: Invalid stars value. It should be between 1 and 5.")
+                return
 
         super().add_movie(title, year, category, rating, num_stars)
 
